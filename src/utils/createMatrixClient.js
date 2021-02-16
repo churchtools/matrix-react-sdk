@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Matrix from 'matrix-js-sdk';
+import SdkConfig from "../SdkConfig";
 
 const localStorage = window.localStorage;
 
@@ -52,7 +53,8 @@ export default function createMatrixClient(opts) {
         });
     }
 
-    if (localStorage) {
+    const disableEncryption = SdkConfig.get()['disableEncryption'] === true;
+    if (localStorage && !disableEncryption) {
         storeOpts.sessionStore = new Matrix.WebStorageSessionStore(localStorage);
     }
 
@@ -60,6 +62,10 @@ export default function createMatrixClient(opts) {
         storeOpts.cryptoStore = new Matrix.IndexedDBCryptoStore(
             indexedDB, "matrix-js-sdk:crypto",
         );
+    }
+
+    if (disableEncryption) {
+        Matrix.setCryptoStoreFactory(() => null);
     }
 
     opts = Object.assign(storeOpts, opts);
