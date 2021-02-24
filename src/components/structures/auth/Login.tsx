@@ -117,7 +117,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
 
             flows: null,
 
-            username: "",
+            username: props.defaultUsername? props.defaultUsername: '',
             phoneCountry: null,
             phoneNumber: "",
 
