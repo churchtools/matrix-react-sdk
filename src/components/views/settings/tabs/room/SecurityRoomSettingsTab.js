@@ -339,7 +339,7 @@ export default class SecurityRoomSettingsTab extends React.Component {
         const room = client.getRoom(this.props.roomId);
         const isEncrypted = this.state.encrypted;
         const hasEncryptionPermission = room.currentState.mayClientSendStateEvent("m.room.encryption", client);
-        const canEnableEncryption = !isEncrypted && hasEncryptionPermission;
+        const canEnableEncryption = !isEncrypted && hasEncryptionPermission && MatrixClientPeg.get().isCryptoEnabled();
 
         let encryptionSettings = null;
         if (isEncrypted && SettingsStore.isEnabled("blacklistUnverifiedDevices")) {
@@ -361,22 +361,28 @@ export default class SecurityRoomSettingsTab extends React.Component {
             historySection = null;
         }
 
+        let enableEncryptionSection = null;
+        if (MatrixClientPeg.get().isCryptoEnabled()) {
+            enableEncryptionSection = (<>
+                <span className='mx_SettingsTab_subheading'>{_t("Encryption")}</span>
+                    <div className='mx_SettingsTab_section mx_SecurityRoomSettingsTab_encryptionSection'>
+                        <div>
+                            <div className='mx_SettingsTab_subsectionText'>
+                                <span>{_t("Once enabled, encryption cannot be disabled.")}</span>
+                            </div>
+                            <LabelledToggleSwitch value={isEncrypted} onChange={this._onEncryptionChange}
+                                                label={_t("Encrypted")} disabled={!canEnableEncryption} />
+                        </div>
+                        {encryptionSettings}
+                    </div>
+            </>);
+        }
+
         return (
             <div className="mx_SettingsTab mx_SecurityRoomSettingsTab">
                 <div className="mx_SettingsTab_heading">{_t("Security & Privacy")}</div>
 
-                <span className='mx_SettingsTab_subheading'>{_t("Encryption")}</span>
-                <div className='mx_SettingsTab_section mx_SecurityRoomSettingsTab_encryptionSection'>
-                    <div>
-                        <div className='mx_SettingsTab_subsectionText'>
-                            <span>{_t("Once enabled, encryption cannot be disabled.")}</span>
-                        </div>
-                        <LabelledToggleSwitch value={isEncrypted} onChange={this._onEncryptionChange}
-                                              label={_t("Encrypted")} disabled={!canEnableEncryption} />
-                    </div>
-                    {encryptionSettings}
-                </div>
-
+                {enableEncryptionSection}
                 <span className='mx_SettingsTab_subheading'>{_t("Who can access this room?")}</span>
                 <div className='mx_SettingsTab_section mx_SettingsTab_subsectionText'>
                     {this._renderRoomAccess()}
