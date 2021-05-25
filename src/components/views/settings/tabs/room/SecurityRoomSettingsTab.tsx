@@ -402,7 +402,7 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
         const room = client.getRoom(this.props.roomId);
         const isEncrypted = this.state.encrypted;
         const hasEncryptionPermission = room.currentState.mayClientSendStateEvent(EventType.RoomEncryption, client);
-        const canEnableEncryption = !isEncrypted && hasEncryptionPermission;
+        const canEnableEncryption = !isEncrypted && hasEncryptionPermission && MatrixClientPeg.get().isCryptoEnabled();
 
         let encryptionSettings = null;
         if (isEncrypted && SettingsStore.isEnabled("blacklistUnverifiedDevices")) {
