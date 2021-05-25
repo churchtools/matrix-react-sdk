@@ -35,6 +35,7 @@ import { ActionPayload } from "../../dispatcher/payloads";
 import { Action } from "../../dispatcher/actions";
 import { ActiveRoomChangedPayload } from "../../dispatcher/payloads/ActiveRoomChangedPayload";
 import { RoomViewStore } from "../RoomViewStore";
+import { MatrixClientPeg } from "../../MatrixClientPeg";
 
 /**
  * A class for tracking the state of the right panel between layouts and
@@ -312,7 +313,7 @@ export default class RightPanelStore extends ReadyWatchingStore {
     }
 
     private getVerificationRedirect(card: IRightPanelCard): IRightPanelCard {
-        if (card.phase === RightPanelPhases.RoomMemberInfo && card.state) {
+        if (card.phase === RightPanelPhases.RoomMemberInfo && card.state && MatrixClientPeg.get().isCryptoEnabled()) {
             // RightPanelPhases.RoomMemberInfo -> needs to be changed to RightPanelPhases.EncryptionPanel if there is a pending verification request
             const { member } = card.state;
             const pendingRequest = pendingVerificationRequestForUser(member);
