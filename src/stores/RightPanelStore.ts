@@ -24,6 +24,7 @@ import { RightPanelPhases, RIGHT_PANEL_PHASES_NO_ARGS } from "./RightPanelStoreP
 import { ActionPayload } from "../dispatcher/payloads";
 import { Action } from '../dispatcher/actions';
 import { SettingLevel } from "../settings/SettingLevel";
+import {MatrixClientPeg} from "../MatrixClientPeg";
 
 interface RightPanelStoreState {
     // Whether or not to show the right panel at all. We split out rooms and groups
@@ -170,7 +171,11 @@ export default class RightPanelStore extends Store<ActionPayload> {
                 let refireParams = payload.refireParams;
                 const allowClose = payload.allowClose ?? true;
                 // redirect to EncryptionPanel if there is an ongoing verification request
-                if (targetPhase === RightPanelPhases.RoomMemberInfo && payload.refireParams) {
+                if (
+                    targetPhase === RightPanelPhases.RoomMemberInfo &&
+                    payload.refireParams &&
+                    MatrixClientPeg.get().isCryptoEnabled()
+                ) {
                     const { member } = payload.refireParams;
                     const pendingRequest = pendingVerificationRequestForUser(member);
                     if (pendingRequest) {
