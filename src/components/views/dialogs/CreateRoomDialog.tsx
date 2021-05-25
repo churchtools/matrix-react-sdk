@@ -275,7 +275,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
         }
 
         let e2eeSection;
-        if (this.state.joinRule !== JoinRule.Public) {
+        if (this.state.joinRule !== JoinRule.Public && MatrixClientPeg.get().isCryptoEnabled()) {
             let microcopy;
             if (privateShouldBeEncrypted()) {
                 if (this.state.canChangeEncryption) {
