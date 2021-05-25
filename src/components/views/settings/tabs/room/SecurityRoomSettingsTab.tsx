@@ -50,6 +50,7 @@ import SettingsTab from "../SettingsTab";
 import SdkConfig from "../../../../../SdkConfig";
 import { shouldForceDisableEncryption } from "../../../../../utils/crypto/shouldForceDisableEncryption";
 import { Caption } from "../../../typography/Caption";
+import { MatrixClientPeg } from "../../../../../MatrixClientPeg";
 
 interface IProps {
     room: Room;
@@ -424,7 +425,7 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
         const isEncrypted = this.state.encrypted;
         const hasEncryptionPermission = room.currentState.mayClientSendStateEvent(EventType.RoomEncryption, client);
         const isEncryptionForceDisabled = shouldForceDisableEncryption(client);
-        const canEnableEncryption = !isEncrypted && !isEncryptionForceDisabled && hasEncryptionPermission;
+        const canEnableEncryption = !isEncrypted && !isEncryptionForceDisabled && hasEncryptionPermission && MatrixClientPeg.safeGet().getCrypto();
 
         let encryptionSettings: JSX.Element | undefined;
         if (isEncrypted && SettingsStore.isEnabled("blacklistUnverifiedDevices")) {
