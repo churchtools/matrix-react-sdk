@@ -1982,6 +1982,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             );
         } else if (this.state.view === Views.LOGIN) {
             const showPasswordReset = SettingsStore.getValue(UIFeature.PasswordReset);
+            const urlParams = new URLSearchParams(window.location.search);
+            const defaultUsername = urlParams.get('defaultUsername');
             view = (
                 <Login
                     isSyncing={this.state.pendingInitialSync}
@@ -1992,7 +1994,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     onForgotPasswordClick={showPasswordReset ? this.onForgotPasswordClick : undefined}
                     onServerConfigChange={this.onServerConfigChange}
                     fragmentAfterLogin={fragmentAfterLogin}
-                    defaultUsername={this.props.startingFragmentQueryParams.defaultUsername as string}
+                    defaultUsername={(defaultUsername || this.props.startingFragmentQueryParams.defaultUsername) as string}
                     {...this.getServerProperties()}
                 />
             );
