@@ -325,7 +325,7 @@ export default class RightPanelStore extends ReadyWatchingStore {
     }
 
     private getVerificationRedirect(card: IRightPanelCard): IRightPanelCard | null {
-        if (card.phase === RightPanelPhases.RoomMemberInfo && card.state) {
+        if (card.phase === RightPanelPhases.RoomMemberInfo && card.state && MatrixClientPeg.safeGet().getCrypto()) {
             // RightPanelPhases.RoomMemberInfo -> needs to be changed to RightPanelPhases.EncryptionPanel if there is a pending verification request
             const { member } = card.state;
             const pendingRequest = member
