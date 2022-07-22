@@ -41,6 +41,8 @@ export interface IConfigOptions {
     default_hs_url?: string; // http url
 
     default_is_url?: string; // used in combination with default_hs_url, but for the identity server
+    // eslint-disable-next-line
+    disableEncryption?: boolean; // custom ct option
 
     // This is intended to be overridden by app startup and not specified by the user
     // This is also why it's allowed to have an interface that isn't snake_case
