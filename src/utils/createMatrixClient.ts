@@ -22,10 +22,13 @@ import {
     IndexedDBCryptoStore,
     IndexedDBStore,
     LocalStorageCryptoStore,
+    setCryptoStoreFactory
 } from "matrix-js-sdk/src/matrix";
+
 
 // @ts-ignore - `.ts` is needed here to make TS happy
 import IndexedDBWorker from "../workers/indexeddb.worker.ts";
+import SdkConfig from "../SdkConfig";
 
 const localStorage = window.localStorage;
 
@@ -61,12 +64,17 @@ export default function createMatrixClient(opts: ICreateClientOpts): MatrixClien
         storeOpts.store = new MemoryStore({ localStorage });
     }
 
-    if (indexedDB) {
+    const disableEncryption = SdkConfig.get()['disableEncryption'] === true;
+
+    if (disableEncryption) {
+        setCryptoStoreFactory(() => null);
+    } else {
+        if (indexedDB && !disableEncryption) {
         storeOpts.cryptoStore = new IndexedDBCryptoStore(indexedDB, "matrix-js-sdk:crypto");
     } else if (localStorage) {
         storeOpts.cryptoStore = new LocalStorageCryptoStore(localStorage);
     } else {
-        storeOpts.cryptoStore = new MemoryCryptoStore();
+        storeOpts.cryptoStore = new MemoryCryptoStore();}
     }
 
     return createClient({
